@@ -1,57 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Display Images from Google Sheets</title>
+    <title>Image Gallery</title>
+    <style>
+        /* Optional CSS styling */
+        #image-gallery {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        #image-gallery img {
+            max-width: 300px;
+            margin: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Images from Google Sheets</h1>
-    <div id="images"></div>
+    <h1>Image Gallery</h1>
+    <div id="image-gallery"></div>
 
-    <!-- Load the Google API client library -->
-    <script src="https://apis.google.com/js/api.js"></script>
     <script>
-        // Your API key from the Google Developer Console
-        var API_KEY = 'AIzaSyAHYMOOuRkvYlNqf1Xth6pEoWwdc8TJCaQ';
+        // Array of your image URLs
+        var imageUrls = [
+            'https://drive.google.com/uc?id=12oa-GSLGy7-p3NhKx8GZC0mPquWSSax3',
+            'https://drive.google.com/uc?id=1bWXsR8ndk2Ysm8icjFqj2Ilb9TcIEyi9',
+            'https://drive.google.com/uc?id=1aXsVjMw2VuhGoCx2n0kgzBD9guCj0Tjx',
+            'https://drive.google.com/uc?id=1bWXsR8ndk2Ysm8icjFqj2Ilb9TcIEyi9'
+        ];
 
-        // The ID of your Google Sheet
-        var SPREADSHEET_ID = '1-LjuU7xDL7G0xEVyr2udEElTgMqXB-0A1FY_hiGzF3c';
+        // Get the image gallery div
+        var galleryDiv = document.getElementById('image-gallery');
 
-        // Discovery doc URL for the Sheets API
-        var DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
-
-        // Load the API and make an API call.  Display the results on the screen.
-        function loadClient() {
-            gapi.client.setApiKey(API_KEY);
-            return gapi.client.load(DISCOVERY_DOC).then(function() {
-                readSheet();
-            }, function(reason) {
-                console.error('Error: ' + reason.result.error.message);
-            });
-        }
-
-        function readSheet() {
-            gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: SPREADSHEET_ID,
-                range: 'Trees!A1:E1',
-            }).then(function(response) {
-                var range = response.result;
-                if (range.values && range.values.length > 0) {
-                    var imagesDiv = document.getElementById('images');
-                    range.values[0].forEach(function(imgUrl) {
-                        var img = document.createElement('img');
-                        img.src = imgUrl;
-                        img.style.maxWidth = '300px'; // Adjust the size as needed
-                        imagesDiv.appendChild(img);
-                    });
-                } else {
-                    console.log('No data found.');
-                }
-            }, function(response) {
-                console.error('Error: ' + response.result.error.message);
-            });
-        }
-
-        gapi.load('client', loadClient);
+        // Loop over the image URLs and create img elements
+        imageUrls.forEach(function(url) {
+            var img = document.createElement('img');
+            img.src = url;
+            img.alt = 'Image';
+            galleryDiv.appendChild(img);
+        });
     </script>
 </body>
 </html>
