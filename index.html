@@ -1,7 +1,57 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>Display Images from Google Sheets</title>
+</head>
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+    <h1>Images from Google Sheets</h1>
+    <div id="images"></div>
+
+    <!-- Load the Google API client library -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script>
+        // Your API key from the Google Developer Console
+        var API_KEY = 'AIzaSyCaEuUXsSBDK2FW6O6fiDk5mx1J1twMkB4';
+
+        // The ID of your Google Sheet
+        var SPREADSHEET_ID = '1-LjuU7xDL7G0xEVyr2udEElTgMqXB-0A1FY_hiGzF3c';
+
+        // Discovery doc URL for the Sheets API
+        var DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
+
+        // Load the API and make an API call.  Display the results on the screen.
+        function loadClient() {
+            gapi.client.setApiKey(API_KEY);
+            return gapi.client.load(DISCOVERY_DOC).then(function() {
+                readSheet();
+            }, function(reason) {
+                console.error('Error: ' + reason.result.error.message);
+            });
+        }
+
+        function readSheet() {
+            gapi.client.sheets.spreadsheets.values.get({
+                spreadsheetId: SPREADSHEET_ID,
+                range: 'Sheet1!A1:B1',
+            }).then(function(response) {
+                var range = response.result;
+                if (range.values && range.values.length > 0) {
+                    var imagesDiv = document.getElementById('images');
+                    range.values[0].forEach(function(imgUrl) {
+                        var img = document.createElement('img');
+                        img.src = imgUrl;
+                        img.style.maxWidth = '300px'; // Adjust the size as needed
+                        imagesDiv.appendChild(img);
+                    });
+                } else {
+                    console.log('No data found.');
+                }
+            }, function(response) {
+                console.error('Error: ' + response.result.error.message);
+            });
+        }
+
+        gapi.load('client', loadClient);
+    </script>
 </body>
 </html>
